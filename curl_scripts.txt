@@ -1,0 +1,19 @@
+curl -s -w "\n%{http_code}" -H "x-api-key: xDqmgOS3Ei2NYCjxZptNb8bCk5LWGmry9UKEnRhL" -X GET 
+"https://4x3ak219p7.execute-api.us-east-1.amazonaws.com/staging/presigned_url?file_extension=jpg" 
+--insecure | { read body; read httpStatusCode; if [ "$httpStatusCode" -ne 200 ]; 
+then echo "Failed to fetch presigned URL. Status code: $httpStatusCode"; else presignedUrl=$(echo "$body" | 
+jq -r '.presigned_url // empty'); fileName=$(echo "$body" | jq -r '.file_name // empty'); if [ -z "$presignedUrl" ] || 
+[ -z "$fileName" ]; then echo "Error decoding JSON or missing fields in the response"; 
+else echo "Presigned URL: $presignedUrl"; echo "File Name: $fileName"; fi; fi; }
+
+
+curl -H "x-api-key: xDqmgOS3Ei2NYCjxZptNb8bCk5LWGmry9UKEnRhL" -X GET "https://4x3ak219p7.execute-api.us-east-1.amazonaws.com/staging/presigned_url?file_extension=jpg"
+
+Put Image in s3 
+curl -X PUT \
+     --upload-file /Users/ike.simmons/data_science/scrape/images/anax/002_anax.jpg \
+     "https://s3.amazonaws.com/aptive.data-staging.pest-identification/pest_image_uploads/4aa386a4-35f8-4452-b9b0-af7838a0668e.jpg?AWSAccessKeyId=ASIAWVQ5FO6OV36EA263&Signature=jWBV8rbDVJB1fs5ygJqh%2FIOlXOc%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEAYaCXVzLWVhc3QtMSJGMEQCIEm9aMCY6kQETOZydw3KH2p5kCWnaYPzxeubuLScMWQrAiAvJvcWPwMLNhTdfRxvJTAotaPHD5EF%2BcGdYostfTzyLCrLAwgfEAMaDDQ1ODU0ODkzNDU1NyIMWWuo8Pazvlw66cEIKqgDfTXCJ50tx%2BZpHppjm2alC09Fcgc1Yy3Kk6PclaElqY5PqmQx7r4zK7ESV4U7AOmQaLdyE%2F1ugKpPIgoYn9gdKSfzJ%2FdKpfw1mJWOs%2BQYSah7uxJZejP46guIv4ou7n9T4tp15JnPtUrIaVoC%2FEOt%2F3ejfltcpEhsq%2F4nWA1YncUrB3joyqH2sMgKyeHmQNgacNLkA6Wme6XxNXl6g5%2FV4DK8E7IsVAzZwqWn74yvqrWxsHvlX6lY%2Bs%2FCXTKNsCakvkcs2EcAgU9ej7M0Z%2FA19vW37t0bif8E4WJjQUDsFLsujwB8OLIssORVaooPlJrkJ36%2FQBXFH3ibeEQEEIGmc%2BYwwgB2zh5yMmr%2Fyno3UE5PbZ37hvaa%2B%2BNuNge%2B4kI%2FIJqE9Nwf4x49g%2FOtxLZ7AAGCSEIgj2SzbxDvYT7ok3Q%2BYIl%2Bize6WNmC62zvqnZ0HiH3keKyTatO8bRvWggRHdK4VOlfNaJ50Hdx4WhAK3p%2BFlNBGRQIpn4IM817XXtXHmvI2S99aX6CE5UrfqcL2KA%2BlNeSMu7Rme6BoepAusNl%2FYxQtyNoijDQl7m2BjqfAVbEindFFtOf1SCVgVIJ01sKMYY3709OmPWqIEaJip2D2nMXDg3utsveDlJGT%2Bt%2FDFay%2BniGxC0lg2RyVojvb86LgGQnT1omjwXmEfqAdSrcO7WUruSRKI9LdjijYTMWD%2B%2BfHHRLOSYRwwZsefJ%2BSFnjPJZwauGXgo7ifqdrunn9WMpzD8x5jCsEriEXwi2yH%2Bsz517MktqCbczsVh3u0w%3D%3D&Expires=1724795866"
+
+Identify Image 
+curl -X GET "https://4x3ak219p7.execute-api.us-east-1.amazonaws.com/staging/perdict_pest_identification?file_name=your_file_name" \
+-H "x-api-key: xDqmgOS3Ei2NYCjxZptNb8bCk5LWGmry9UKEnRhL"
